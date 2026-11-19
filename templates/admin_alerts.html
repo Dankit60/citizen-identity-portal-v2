@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Login alerts{% endblock %}
+{% block content %}
+<div class="card">
+  <h3>Login-anomaly alerts</h3>
+  <table>
+    <tr><th>Time</th><th>User</th><th>Rule triggered</th><th>Severity</th><th>Status</th><th>Action</th></tr>
+    {% for a in alerts %}
+    <tr>
+      <td>{{ a.t }}</td>
+      <td>{{ a.full_name or '-' }}</td>
+      <td>{{ a.rule_triggered }}</td>
+      <td class="sev-{{ a.severity }}">{{ a.severity }}</td>
+      <td>{{ a.status }}</td>
+      <td>
+        {% if a.status == 'open' %}
+        <form method="post" action="{{ url_for('alert_action', alert_id=a.alert_id, action='confirm') }}" style="display:inline"><button class="red" style="padding:4px 8px">Confirm</button></form>
+        <form method="post" action="{{ url_for('alert_action', alert_id=a.alert_id, action='dismiss') }}" style="display:inline"><button class="grey" style="padding:4px 8px">Dismiss</button></form>
+        {% endif %}
+        {% if a.user_status == 'locked' %}
+        <form method="post" action="{{ url_for('alert_action', alert_id=a.alert_id, action='unlock') }}" style="display:inline"><button class="green" style="padding:4px 8px">Unlock account</button></form>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}<tr><td colspan="6">No alerts yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

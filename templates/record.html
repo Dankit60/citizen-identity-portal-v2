@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card narrow">
+  <h2>{{ rec.record_type }}</h2>
+  <p>{{ rec.details }}</p>
+  <p class="hint">Record #{{ rec.record_id }} &middot; updated {{ rec.updated_at }}</p>
+  <a class="btn grey" href="{{ url_for('dashboard') }}">Back</a>
+</div>
+{% endblock %}

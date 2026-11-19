@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Citizen Digital Identity Portal</h1>
+  <p>Secure access to your records using your fingerprint, face or an email code.</p>
+  <p>
+    <a class="btn" href="{{ url_for('login') }}">Log in with fingerprint</a>
+    <a class="btn grey" href="{{ url_for('register') }}">Register as a new citizen</a>
+  </p>
+  <p class="hint">Prototype: fingerprints are supplied as sample images (no scanner required).</p>
+</div>
+{% endblock %}

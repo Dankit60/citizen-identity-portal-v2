@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_scanner.html" import scanner %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="card narrow" style="max-width:520px">
+  <h2>Create citizen account</h2>
+  <p class="hint">One page, three parts: your details, your fingerprint, and (optionally) your face. Your account is created only when everything is accepted.</p>
+  <form method="post" enctype="multipart/form-data">
+
+    <h3 style="margin-bottom:4px">1. Your details</h3>
+    <label>Full name</label><input name="full_name" value="{{ request.form.get('full_name','') }}" required>
+    <label>National ID number</label><input name="national_id" value="{{ request.form.get('national_id','') }}" required maxlength="8" inputmode="numeric">
+    <label>Email address</label><input name="email" type="email" value="{{ request.form.get('email','') }}" required>
+    <label>Phone number</label><input name="phone" value="{{ request.form.get('phone','') }}" required inputmode="numeric">
+
+    <h3 style="margin:18px 0 4px">2. Fingerprint (required)</h3>
+    <label>Scan your fingerprint (1 to 3 scans of the same finger)</label>
+    <input type="file" id="fp_input" name="fingerprint" accept="image/*" multiple {% if not DEMO_UPLOAD %}style="display:none"{% endif %}>
+    {{ scanner("fp_input", 3) }}
+    <p class="hint">Only encrypted fingerprint features are saved, never the picture.{% if DEMO_UPLOAD %} Demo mode: you may also choose images from the <b>sample_fingerprints</b> folder.{% endif %}</p>
+
+    <h3 style="margin:18px 0 4px">3. Face image (optional)</h3>
+    <label>Clear, front-facing photo</label>
+    <input type="file" name="face_image" accept="image/*">
+    <p class="hint">Lets you log in with your face as an alternative. You can skip this now and add it later. Email one-time PIN needs nothing extra: it uses the email above.</p>
+
+    <button class="full" type="submit">Create account</button>
+  </form>
+  <p class="hint">Already registered? <a href="{{ url_for('login') }}">Log in</a></p>
+</div>
+{% endblock %}

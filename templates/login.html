@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "_scanner.html" import scanner %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h2>Citizen sign in</h2>
+  <p class="hint">Choose one of the available verification methods.</p>
+  <form method="post" enctype="multipart/form-data">
+    <label>National ID number</label><input name="national_id" value="{{ request.form.get('national_id','') }}" required>
+    <label>Authentication method</label>
+    <select name="method" id="method" onchange="showMethod()">
+      <option value="fingerprint" {% if selected_method != 'face' and selected_method != 'otp' %}selected{% endif %}>Fingerprint (primary)</option>
+      <option value="face" {% if selected_method == 'face' %}selected{% endif %}>Face recognition (alternative)</option>
+      <option value="otp" {% if selected_method == 'otp' %}selected{% endif %}>Email one-time PIN (alternative)</option>
+    </select>
+    <div id="fingerprintBox"><label>Fingerprint scan</label><input type="file" id="login_fp" name="fingerprint" accept="image/*" {% if not DEMO_UPLOAD %}style="display:none"{% endif %}>{{ scanner("login_fp", 1) }}</div>
+    <div id="faceBox"><label>Face image</label><input type="file" name="face_image" accept="image/*"><p class="hint">Use a clear, front-facing image. Face matching is a prototype feature and does not include liveness detection.</p></div>
+    <div id="otpBox"><label>One-time PIN</label><input name="otp_code" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit code"><button class="grey full" name="action" value="send_otp" type="submit">Send code to registered email</button><button class="full" name="action" value="verify_otp" type="submit">Verify code</button></div>
+    <button class="full" id="verifyButton" type="submit">Verify with fingerprint</button>
+  </form>
+  <p class="hint">Face alternative not enrolled yet? <a href="{{ url_for('face_enrol') }}">Enrol face image</a></p>
+  <p class="hint">New citizen? <a href="{{ url_for('register') }}">Register</a></p>
+</div>
+<script>
+function showMethod(){
+ const m=document.getElementById('method').value;
+ document.getElementById('fingerprintBox').style.display=m==='fingerprint'?'block':'none';
+ document.getElementById('faceBox').style.display=m==='face'?'block':'none';
+ document.getElementById('otpBox').style.display=m==='otp'?'block':'none';
+ document.getElementById('verifyButton').style.display=m==='fingerprint'?'block':(m==='face'?'block':'none');
+ document.getElementById('verifyButton').textContent=m==='face'?'Verify with face':'Verify with fingerprint';
+}
+showMethod();
+</script>
+{% endblock %}

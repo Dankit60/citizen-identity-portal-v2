@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Face enrolment{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h2>Alternative face enrolment</h2>
+  <p class="hint">Register one clear, front-facing face image. The system stores encrypted image descriptors rather than the uploaded photograph.</p>
+  <form method="post" enctype="multipart/form-data">
+    <label>National ID number</label><input name="national_id" required>
+    <label>Face image</label><input type="file" name="face_image" accept="image/*" required>
+    <button class="full" type="submit">Save face template</button>
+  </form>
+  <p class="hint"><a href="{{ url_for('login') }}">Back to sign in</a></p>
+</div>
+{% endblock %}

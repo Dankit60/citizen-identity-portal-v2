@@ -1,0 +1,72 @@
+{% macro scanner(input_id, max_scans=1) %}
+<div class="scanner" data-input="{{ input_id }}" data-max="{{ max_scans }}">
+  <button type="button" class="full scan-open">Scan fingerprint</button>
+  <div class="scan-panel" hidden>
+    <div class="scan-stage">
+      <video class="scan-video" autoplay playsinline muted></video>
+      <div class="scan-ring"><div class="scan-line"></div></div>
+    </div>
+    <p class="hint scan-msg">Hold your fingertip close to the camera, inside the circle, in good light. Keep it still.</p>
+    <div class="scan-thumbs"></div>
+    <button type="button" class="full scan-go">Start scan</button>
+    <button type="button" class="grey full scan-close">Close camera</button>
+  </div>
+  <p class="hint scan-count" hidden></p>
+</div>
+<style>
+.scan-panel{margin:10px 0}.scan-stage{position:relative;width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto;background:#111;border-radius:12px;overflow:hidden}
+.scan-video{width:100%;height:100%;object-fit:cover}
+.scan-ring{position:absolute;inset:14%;border:3px dashed #fff;border-radius:50%;overflow:hidden;box-shadow:0 0 0 999px rgba(0,0,0,.45)}
+.scan-line{position:absolute;left:0;right:0;height:4px;background:#37d67a;box-shadow:0 0 12px #37d67a;top:0;opacity:0}
+.scanning .scan-line{opacity:1;animation:sweep 1.6s ease-in-out infinite alternate}
+@keyframes sweep{from{top:0}to{top:calc(100% - 4px)}}
+.scan-thumbs{display:flex;gap:8px;justify-content:center;margin:8px 0}.scan-thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:2px solid #37d67a}
+</style>
+<script>
+(function(){
+  const box=document.querySelector('.scanner[data-input="{{ input_id }}"]');
+  const input=document.getElementById('{{ input_id }}'), max=parseInt(box.dataset.max,10);
+  const panel=box.querySelector('.scan-panel'), video=box.querySelector('.scan-video'), msg=box.querySelector('.scan-msg');
+  const thumbs=box.querySelector('.scan-thumbs'), count=box.querySelector('.scan-count'), go=box.querySelector('.scan-go');
+  let stream=null, files=[];
+  function stop(){ if(stream){stream.getTracks().forEach(t=>t.stop()); stream=null;} panel.hidden=true; }
+  function refresh(){
+    const dt=new DataTransfer(); files.forEach(f=>dt.items.add(f)); input.files=dt.files;
+    thumbs.innerHTML=''; files.forEach(f=>{const i=new Image(); i.src=URL.createObjectURL(f); thumbs.appendChild(i);});
+    count.hidden=files.length===0; count.textContent='Scanned: '+files.length+' of '+max+(max>1?' (you can add up to '+max+')':'');
+    
+  }
+  input.dataset.wasRequired=input.required?'1':'0';
+  box.querySelector('.scan-open').onclick=async()=>{
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert('Camera not available here. It needs HTTPS or localhost. Use the file upload instead.');return;}
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:1280}},audio:false});
+         video.srcObject=stream; panel.hidden=false; }
+    catch(e){ alert('Could not open the camera: '+e.message+'. Use the file upload instead.'); }
+  };
+  box.querySelector('.scan-close').onclick=stop;
+  go.onclick=()=>{
+    if(files.length>=max && max>1){msg.textContent='Maximum of '+max+' scans reached.';return;}
+    const stage=box.querySelector('.scan-stage'); stage.classList.add('scanning'); go.disabled=true; msg.textContent='Scanning... hold still.';
+    setTimeout(()=>{
+      const s=Math.min(video.videoWidth,video.videoHeight)*0.72, sx=(video.videoWidth-s)/2, sy=(video.videoHeight-s)/2;
+      const c=document.createElement('canvas'); c.width=c.height=600; c.getContext('2d').drawImage(video,sx,sy,s,s,0,0,600,600);
+      c.toBlob(b=>{
+        const f=new File([b],'camera_scan_'+(files.length+1)+'.png',{type:'image/png'});
+        if(max===1) files=[f]; else files.push(f);
+        refresh(); stage.classList.remove('scanning'); go.disabled=false;
+        msg.textContent=(files.length>=max)?'Scan complete.':'Captured. Scan again from a slightly different angle, or close the camera.';
+        if(files.length>=max) setTimeout(stop,600);
+      },'image/png');
+    },1800);
+  };
+  const form=input.closest('form');
+  form.addEventListener('submit',function(e){
+    const m=document.getElementById('method');
+    if(m && m.value!=='fingerprint') return;
+    if(e.submitter && e.submitter.name==='action') return;
+    if(files.length===0 && input.files.length===0){ e.preventDefault(); alert('Please scan your fingerprint first.'); }
+  });
+  window.addEventListener('pagehide',stop);
+})();
+</script>
+{% endmacro %}

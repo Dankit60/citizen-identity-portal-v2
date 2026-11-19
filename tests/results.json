@@ -1,0 +1,306 @@
+{
+  "tests": [
+    {
+      "id": "T01",
+      "feature": "Registration",
+      "action": "Submit valid details with three fingerprint scans",
+      "expected": "Account created and set to active",
+      "result": "Pass",
+      "observed": "Account created, status = active"
+    },
+    {
+      "id": "T02",
+      "feature": "Registration",
+      "action": "Submit valid details without a fingerprint",
+      "expected": "Rejected with a message; no account created",
+      "result": "Pass",
+      "observed": "Rejected; no account row created"
+    },
+    {
+      "id": "T03",
+      "feature": "Registration",
+      "action": "Submit a 6-digit national ID",
+      "expected": "Rejected: ID must be 7 or 8 digits",
+      "result": "Pass",
+      "observed": "Validation message shown"
+    },
+    {
+      "id": "T04",
+      "feature": "Registration",
+      "action": "Register an ID that already exists",
+      "expected": "Rejected: already registered",
+      "result": "Pass",
+      "observed": "Duplicate message shown"
+    },
+    {
+      "id": "T05",
+      "feature": "Registration",
+      "action": "Upload a file that is not a fingerprint image",
+      "expected": "Rejected; no half-finished account left behind",
+      "result": "Pass",
+      "observed": "Rejected; no account row created"
+    },
+    {
+      "id": "T06",
+      "feature": "Fingerprint login",
+      "action": "Log in with a genuine scan of the enrolled finger",
+      "expected": "Access granted; dashboard shown",
+      "result": "Pass",
+      "observed": "Dashboard displayed"
+    },
+    {
+      "id": "T07",
+      "feature": "Fingerprint login",
+      "action": "Log in with another person's fingerprint",
+      "expected": "Access denied; attempts-left message",
+      "result": "Pass",
+      "observed": "Denied, failed_count = 1"
+    },
+    {
+      "id": "T08",
+      "feature": "Account lockout",
+      "action": "Three consecutive failed attempts",
+      "expected": "Account locked and a High-severity alert raised",
+      "result": "Pass",
+      "observed": "Status = locked; alert severity = High"
+    },
+    {
+      "id": "T09",
+      "feature": "Account lockout",
+      "action": "Genuine fingerprint on a locked account",
+      "expected": "Blocked: account locked",
+      "result": "Pass",
+      "observed": "Blocked with locked message"
+    },
+    {
+      "id": "T10",
+      "feature": "Admin login",
+      "action": "Wrong administrator password",
+      "expected": "Rejected",
+      "result": "Pass",
+      "observed": "Rejected; stayed on login page"
+    },
+    {
+      "id": "T11",
+      "feature": "Admin login",
+      "action": "Correct administrator credentials",
+      "expected": "Admin overview shown",
+      "result": "Pass",
+      "observed": "Overview with statistics displayed"
+    },
+    {
+      "id": "T12",
+      "feature": "Alerts page",
+      "action": "Open the alerts page as admin",
+      "expected": "Lockout alert listed",
+      "result": "Pass",
+      "observed": "Alert visible in table"
+    },
+    {
+      "id": "T13",
+      "feature": "Account unlock",
+      "action": "Admin unlocks the account, then the owner logs in",
+      "expected": "Status active, counter reset, login succeeds",
+      "result": "Pass",
+      "observed": "Status = active, failed_count = 0, login succeeded"
+    },
+    {
+      "id": "T14",
+      "feature": "Access control",
+      "action": "Open dashboard without logging in",
+      "expected": "Redirected to login",
+      "result": "Pass",
+      "observed": "Redirected to sign-in page"
+    },
+    {
+      "id": "T15",
+      "feature": "Access control",
+      "action": "Citizen opens another citizen's record by changing the URL",
+      "expected": "Blocked (HTTP 403) and logged",
+      "result": "Pass",
+      "observed": "HTTP 403; blocked attempt written to audit log"
+    },
+    {
+      "id": "T16",
+      "feature": "Access control",
+      "action": "Citizen tries to open the admin console",
+      "expected": "Redirected to admin login",
+      "result": "Pass",
+      "observed": "Redirected to administrator sign-in"
+    },
+    {
+      "id": "T17",
+      "feature": "Login-anomaly monitor",
+      "action": "Three attempts on non-existent IDs from one IP",
+      "expected": "Medium-severity alert raised",
+      "result": "Pass",
+      "observed": "Alert raised"
+    },
+    {
+      "id": "T18",
+      "feature": "Login-anomaly monitor",
+      "action": "Five or more failed attempts from one IP within ten minutes",
+      "expected": "High-severity alert raised",
+      "result": "Pass",
+      "observed": "Alert raised"
+    },
+    {
+      "id": "T19",
+      "feature": "Email OTP",
+      "action": "Request a code, enter a wrong code, then the correct code",
+      "expected": "Wrong code rejected; correct code grants access; code stored only as a hash",
+      "result": "Pass",
+      "observed": "Wrong code rejected; correct code accepted; stored value is a SHA-256 hash"
+    },
+    {
+      "id": "T20",
+      "feature": "Email OTP",
+      "action": "Enter a correct code after it has expired (5 minutes)",
+      "expected": "Rejected",
+      "result": "Pass",
+      "observed": "Expired code rejected"
+    },
+    {
+      "id": "T21",
+      "feature": "Template protection",
+      "action": "Inspect the stored fingerprint template in the database",
+      "expected": "Ciphertext only; not a readable feature file",
+      "result": "Pass",
+      "observed": "Stored as Fernet (AES) ciphertext; decrypts only with the key"
+    },
+    {
+      "id": "T22",
+      "feature": "Input limits",
+      "action": "Upload a file larger than 8 MB",
+      "expected": "Rejected (HTTP 413)",
+      "result": "Pass",
+      "observed": "HTTP 413"
+    },
+    {
+      "id": "T23",
+      "feature": "Error handling",
+      "action": "Open a page that does not exist",
+      "expected": "Friendly error page (404)",
+      "result": "Pass",
+      "observed": "HTTP 404 with error page"
+    }
+  ],
+  "accuracy": {
+    "users": 3,
+    "genuine_trials": 9,
+    "impostor_trials": 54,
+    "threshold": 15.0,
+    "far": 0.0,
+    "frr": 0.0,
+    "genuine_min": 34.6,
+    "genuine_mean": 37.3,
+    "impostor_max": 4.3,
+    "impostor_mean": 2.8,
+    "sweep": [
+      {
+        "threshold": 5,
+        "far": 0.0,
+        "frr": 0.0
+      },
+      {
+        "threshold": 10,
+        "far": 0.0,
+        "frr": 0.0
+      },
+      {
+        "threshold": 15,
+        "far": 0.0,
+        "frr": 0.0
+      },
+      {
+        "threshold": 20,
+        "far": 0.0,
+        "frr": 0.0
+      },
+      {
+        "threshold": 25,
+        "far": 0.0,
+        "frr": 0.0
+      },
+      {
+        "threshold": 30,
+        "far": 0.0,
+        "frr": 0.0
+      },
+      {
+        "threshold": 40,
+        "far": 0.0,
+        "frr": 100.0
+      }
+    ],
+    "genuine_scores": [
+      38.2,
+      39.6,
+      37.8,
+      34.6,
+      37.6,
+      36.4,
+      38.9,
+      37.8,
+      35.1
+    ],
+    "impostor_scores": [
+      3.9,
+      2.8,
+      2.4,
+      3.9,
+      3.4,
+      3.6,
+      3.9,
+      2.8,
+      2.4,
+      3.9,
+      3.4,
+      3.8,
+      3.0,
+      2.0,
+      2.4,
+      2.5,
+      3.2,
+      3.8,
+      1.4,
+      2.0,
+      1.4,
+      2.1,
+      2.6,
+      2.2,
+      2.6,
+      3.8,
+      3.4,
+      2.8,
+      3.2,
+      3.2,
+      2.6,
+      3.8,
+      3.4,
+      2.8,
+      3.2,
+      3.2,
+      1.9,
+      2.0,
+      1.6,
+      2.2,
+      2.0,
+      1.8,
+      2.6,
+      2.8,
+      2.2,
+      4.3,
+      2.2,
+      3.0,
+      2.6,
+      2.8,
+      2.2,
+      4.3,
+      2.2,
+      3.0
+    ]
+  },
+  "passed": 23,
+  "total": 23
+}

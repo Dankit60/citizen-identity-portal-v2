@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<div class="card">
+  <h3>Registered citizens</h3>
+  <table>
+    <tr><th>National ID</th><th>Name</th><th>Email</th><th>Status</th><th>Failed tries</th><th>Registered</th><th></th></tr>
+    {% for u in users %}
+    <tr><td>{{ u.national_id }}</td><td>{{ u.full_name }}</td><td>{{ u.email }}</td>
+        <td class="{{ 'bad-t' if u.status == 'locked' else '' }}">{{ u.status }}</td>
+        <td>{{ u.failed_count }}</td><td>{{ u.created }}</td>
+        <td>{% if u.status == 'locked' %}
+          <form method="post" action="{{ url_for('unlock_user', user_id=u.user_id) }}"><button class="green" style="padding:4px 8px">Unlock</button></form>
+        {% endif %}</td></tr>
+    {% else %}<tr><td colspan="7">No citizens registered yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

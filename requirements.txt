@@ -1,0 +1,6 @@
+flask
+cryptography
+opencv-python-headless
+numpy
+waitress
+gunicorn

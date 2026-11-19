@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}My dashboard{% endblock %}
+{% block content %}
+<div class="cards">
+  <div class="card" style="flex:2;margin:0">
+    <h3>My profile</h3>
+    <p>Name: <b>{{ user.full_name }}</b><br>
+       National ID: {{ user.national_id[:4] }}****<br>
+       Email: {{ user.email }}</p>
+  </div>
+  <div class="card warn" style="flex:1;margin:0">
+    <h3>Last login</h3>
+    {% if last %}<p>{{ last.t }}<br>IP: {{ last.ip_address }}</p>{% else %}<p>This is your first login.</p>{% endif %}
+  </div>
+</div>
+<div class="card">
+  <h3>My records</h3>
+  <table>
+    <tr><th>Record type</th><th>Details</th><th>Last updated</th><th></th></tr>
+    {% for r in records %}
+    <tr><td>{{ r.record_type }}</td><td>{{ r.details }}</td><td>{{ r.updated }}</td>
+        <td><a href="{{ url_for('record', record_id=r.record_id) }}">Open</a></td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

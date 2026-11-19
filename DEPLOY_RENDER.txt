@@ -1,0 +1,14 @@
+RENDER DEPLOYMENT - ACADEMIC DEMONSTRATION ONLY
+
+1. Upload the CONTENTS of this folder to a new GitHub repository.
+2. In Render choose New > Web Service and connect that repository.
+3. Runtime: Python 3
+   Build command: pip install -r requirements.txt
+   Start command: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
+4. Choose Free for a classroom demo.
+5. Use only fictional/sample identities and sample biometric images.
+
+IMPORTANT DATA NOTE:
+Render's free service filesystem is ephemeral. The SQLite database and encryption/session keys may be lost on restart or redeploy. For persistent demo records, add a Render persistent disk mounted at /var/data and set environment variable PORTAL_DATA_DIR=/var/data. Persistent disks may require a paid service. Do not use real citizen biometrics or National ID data in this classroom deployment.
+
+The application uses a default demo administrator account. Change its password before sharing the demo URL. The face/fingerprint functions are prototype-level and are not validated identity proofing.

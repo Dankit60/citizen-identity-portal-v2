@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+<div class="cards">
+  <div class="stat">Total citizens<b>{{ stats.users }}</b></div>
+  <div class="stat">Successful logins today<b>{{ stats.logins }}</b></div>
+  <div class="stat">Failed attempts today<b class="bad-t">{{ stats.failed }}</b></div>
+  <div class="stat">Open alerts<b class="sev-High">{{ stats.alerts }}</b></div>
+</div>
+<div class="card">
+  <h3>Recent login activity</h3>
+  <table>
+    <tr><th>Time</th><th>User</th><th>IP address</th><th>Match %</th><th>Result</th></tr>
+    {% for r in recent %}
+    <tr><td>{{ r.t }}</td><td>{{ r.who }}</td><td>{{ r.ip_address }}</td>
+        <td>{{ r.match_score if r.match_score is not none else '-' }}</td>
+        <td class="{{ 'ok-t' if r.result == 'success' else 'bad-t' }}">{{ r.result }}</td></tr>
+    {% else %}<tr><td colspan="5">No activity yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

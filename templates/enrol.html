@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Fingerprint enrolment{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h2>Fingerprint enrolment</h2>
+  <p class="hint">Choose 1 to 3 scans of the same finger. Only encrypted features are saved, never the image.</p>
+  <form method="post" enctype="multipart/form-data">
+    <label>National ID number</label><input name="national_id" value="{{ prefill }}" required>
+    <label>Fingerprint image(s)</label>
+    <input type="file" name="fingerprint" accept="image/*" multiple required>
+    <button class="full" type="submit">Save fingerprint</button>
+  </form>
+</div>
+{% endblock %}

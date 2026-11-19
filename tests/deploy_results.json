@@ -1,0 +1,90 @@
+{
+  "checks": [
+    {
+      "id": "D01",
+      "check": "Home page loads",
+      "result": "Pass",
+      "observed": "HTTP 200, 12 ms"
+    },
+    {
+      "id": "D02",
+      "check": "Register page shows fingerprint upload field",
+      "result": "Pass",
+      "observed": "HTTP 200"
+    },
+    {
+      "id": "D03",
+      "check": "Unknown URL shows error page, no stack trace",
+      "result": "Pass",
+      "observed": "HTTP 404"
+    },
+    {
+      "id": "D04",
+      "check": "Flask debug console is not exposed",
+      "result": "Pass",
+      "observed": "HTTP 404"
+    },
+    {
+      "id": "D05",
+      "check": "Sign-up with details + 3 fingerprints over HTTP",
+      "result": "Pass",
+      "observed": "HTTP 200"
+    },
+    {
+      "id": "D06",
+      "check": "Fingerprint login with the registered finger",
+      "result": "Pass",
+      "observed": "HTTP 200, 80 ms"
+    },
+    {
+      "id": "D07",
+      "check": "Session keeps the user logged in",
+      "result": "Pass",
+      "observed": "Dashboard reachable with session cookie"
+    },
+    {
+      "id": "D08",
+      "check": "Logout ends the session",
+      "result": "Pass",
+      "observed": "Dashboard no longer reachable"
+    },
+    {
+      "id": "D09",
+      "check": "Impostor fingerprint rejected",
+      "result": "Pass",
+      "observed": "Denied with attempts-left message"
+    },
+    {
+      "id": "D10",
+      "check": "Administrator can sign in",
+      "result": "Pass",
+      "observed": "HTTP 200"
+    },
+    {
+      "id": "D11",
+      "check": "Admin page /admin/users loads",
+      "result": "Pass",
+      "observed": "HTTP 200"
+    },
+    {
+      "id": "D12",
+      "check": "Admin page /admin/alerts loads",
+      "result": "Pass",
+      "observed": "HTTP 200"
+    },
+    {
+      "id": "D13",
+      "check": "Admin page /admin/audit loads",
+      "result": "Pass",
+      "observed": "HTTP 200"
+    },
+    {
+      "id": "D14",
+      "check": "30 page requests from 10 parallel users",
+      "result": "Pass",
+      "observed": "All HTTP 200, total 0.05 s"
+    }
+  ],
+  "passed": 14,
+  "total": 14
+}
